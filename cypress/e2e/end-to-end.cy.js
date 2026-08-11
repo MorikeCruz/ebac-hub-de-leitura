@@ -9,38 +9,30 @@ describe('Fluxo End-to-End - Cadastro e Login', () => {
     const telefone = '11999999999'
     const senha = 'Teste@123'
 
+    const usuario = {
+      nome,
+      email,
+      telefone,
+      senha
+    }
+
     // Cadastro
-    cy.visit('/register.html')
-
-    cy.get('#name').type(nome)
-    cy.get('#email').type(email)
-    cy.get('#phone').type(telefone)
-    cy.get('#password').type(senha)
-    cy.get('#confirm-password').type(senha)
-
-    // Aceita os termos
-    cy.get('input[type="checkbox"]').check({ force: true })
-
-    // Cria a conta
-    cy.get('button[type="submit"]').click()
+    cy.cadastrarUsuario(usuario)
 
     // Aguarda entrar no dashboard
     cy.url({ timeout: 10000 }).should('include', 'dashboard')
 
     // Logout
-    cy.get('button[title="Sair"]').click()
+    cy.logoutUsuario()
 
     // Deve voltar para o login
     cy.url({ timeout: 10000 }).should('include', 'login')
 
     // Login novamente
-    cy.get('#email').type(email)
-    cy.get('#password').type(senha)
-    cy.get('button[type="submit"]').click()
+    cy.loginUsuario(email, senha)
 
     // Validação final
     cy.url({ timeout: 10000 }).should('include', 'dashboard')
-
   })
 
 })
