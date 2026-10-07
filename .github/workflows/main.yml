@@ -30,8 +30,11 @@ jobs:
       - name: Executar testes
         run: |
           mkdir -p docs
+
           set +e
+
           npx cypress run --reporter html --reporter-options "output=docs/index.html"
+
           STATUS=$?
 
           if [ $STATUS -eq 0 ]; then
@@ -44,6 +47,8 @@ jobs:
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Preparar relatório
         uses: actions/upload-pages-artifact@v3
