@@ -12,10 +12,10 @@ permissions:
 
 jobs:
   testes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
-      - name: Baixar código
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Configurar Node.js
@@ -27,33 +27,27 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
-      - name: Executar testes
+      - name: Executar aplicação
+        run: npm start &
+
+      - name: Aguardar aplicação
+        run: npx wait-on http://localhost:3000
+
+      - name: Executar testes Cypress
         run: |
           mkdir -p docs
-
-          set +e
-
-          npx cypress run --reporter html --reporter-options "output=docs/index.html"
-
-          STATUS=$?
-
-          if [ $STATUS -eq 0 ]; then
-            echo "<p>Todos os testes foram executados com sucesso.</p>" >> docs/index.html
-          else
-            echo "<p>Foram encontrados testes com falha.</p>" >> docs/index.html
-          fi
-
-          exit 0
+          npx cypress run
 
       - name: Configurar GitHub Pages
+        if: always()
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Preparar relatório
+        if: always()
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
 
       - name: Publicar no GitHub Pages
+        if: always()
         uses: actions/deploy-pages@v4
