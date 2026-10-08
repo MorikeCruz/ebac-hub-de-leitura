@@ -11,7 +11,7 @@ async function setupNodeEvents(on, config) {
   on(
     "file:preprocessor",
     createBundler({
-      define: config.env,
+      define: {},
       plugins: [
         require("@badeball/cypress-cucumber-preprocessor/esbuild").createEsbuildPlugin(config)
       ]
